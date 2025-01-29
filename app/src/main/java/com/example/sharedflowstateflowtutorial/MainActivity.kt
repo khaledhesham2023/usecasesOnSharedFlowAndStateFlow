@@ -20,46 +20,45 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     // usecase 1 : StateFlow as LiveData
-    private val stockViewModel = StockViewModel()
+//    private val stockViewModel = StockViewModel()
 
 //    // usecase 2 : SharedFlow in Chatting App
-//    private val chatViewModel: ChatViewModel = ChatViewModel(ChatRepository())
-//    private var chatAdapter = ChatAdapter()
+    private val chatViewModel: ChatViewModel = ChatViewModel(ChatRepository())
+    private var chatAdapter = ChatAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // usecase 1 : StateFlow as LiveData
-        val stockTextView = findViewById<TextView>(R.id.stockPriceTextView)
+//        val stockTextView = findViewById<TextView>(R.id.stockPriceTextView)
+//
+//        lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                stockViewModel.stockPrice.collect { price ->
+//                    stockTextView.text = "Stock Price: $price"
+//                }
+//            }
+//        }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                stockViewModel.stockPrice.collect { price ->
-                    stockTextView.text = "Stock Price: $price"
-                }
+        // usecase 2 : SharedFlow in Chatting App
+        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        val fab = findViewById<FloatingActionButton>(R.id.button_add)
+        val et = findViewById<EditText>(R.id.et)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = chatAdapter
+        fab.setOnClickListener {
+            if (et.text.toString().isNotEmpty()){
+                chatViewModel.sendMessage("Khaled",et.text.toString().trim())
+            } else {
+                et.error = "No entry"
             }
         }
-
-//        // usecase 2 : SharedFlow in Chatting App
-//        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-//        val fab = findViewById<FloatingActionButton>(R.id.button_add)
-//        val et = findViewById<EditText>(R.id.et)
-//        recyclerView.layoutManager = LinearLayoutManager(this)
-//        recyclerView.adapter = chatAdapter
-//        fab.setOnClickListener {
-//            if (et.text.toString().isNotEmpty()){
-//                chatViewModel.sendMessage("Khaled",et.text.toString().trim())
-//            } else {
-//                et.error = "No entry"
-//            }
-//        }
-//        lifecycleScope.launch {
-//            chatViewModel.incomingMessages.collect { message ->
-//                chatAdapter.addMessages(message)
-//                recyclerView.scrollToPosition(chatAdapter.itemCount - 1)
-//            }
-//        }
-//    }
+        lifecycleScope.launch {
+            chatViewModel.incomingMessages.collect { message ->
+                chatAdapter.addMessages(message)
+                recyclerView.scrollToPosition(chatAdapter.itemCount - 1)
+            }
+        }
     }
-}
+    }
