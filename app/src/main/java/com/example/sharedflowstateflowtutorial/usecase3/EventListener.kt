@@ -11,32 +11,22 @@ class EventListener(
     init {
         eventBus.events.onEach { event ->
             when (event) {
-                is Event.EventA -> {
-                    handleEventA()
-                }
-
-                is Event.EventB -> {
-                    handleEventB()
-                }
-
-                is Event.EventC -> {
-                    handleEventC(event.value)
-                }
+                is Event.EventA -> handleEventA()
+                is Event.EventB -> handleEventB()
+                is Event.EventC -> handleEventC(event.value)
             }
         }.launchIn(scope)
     }
 
-    private fun handleEventA() {
-        println("EventA received")
+    private fun handleEventC(value: Int) {
+        println("Event C emitted with value: $value")
     }
 
     private fun handleEventB() {
-        println("EventB received")
-
+        println("Event B emitted")
     }
 
-    private fun handleEventC(value: Int) {
-        println("EventC received with value: $value")
-
+    private fun handleEventA() {
+        println("Event A emitted")
     }
 }
